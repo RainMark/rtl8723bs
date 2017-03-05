@@ -691,7 +691,7 @@ struct dvobj_priv *devobj_init(void)
 {
 	struct dvobj_priv *pdvobj = NULL;
 
-	pdvobj = (struct dvobj_priv *)rtw_zmalloc(sizeof(*pdvobj);
+	pdvobj = (struct dvobj_priv *)rtw_zmalloc(sizeof(*pdvobj));
 	if (!pdvobj)
 		return NULL;
 
