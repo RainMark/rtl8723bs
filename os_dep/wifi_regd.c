@@ -43,13 +43,14 @@ static const struct ieee80211_regdomain rtw_regdom_rd = {
 	.reg_rules = {
 		      RTW_2GHZ_CH01_11,
 		      RTW_2GHZ_CH12_13,
-		      }
+		}
 };
 
 static int rtw_ieee80211_channel_to_frequency(int chan, int band)
 {
-	/* see 802.11 17.3.8.3.2 and Annex J
-	 * there are overlapping channel numbers in 5GHz and 2GHz bands */
+	/* see 802.11 17.3.8.3.2 and Annex J */
+	/* there are overlapping channel */
+	/* numbers in 5GHz and 2GHz bands */
 
 	/* IEEE80211_BAND_2GHZ */
 	if (chan == 14)
@@ -76,11 +77,9 @@ static void _rtw_reg_apply_flags(struct wiphy *wiphy)
 	/*  all channels disable */
 	for (i = 0; i < IEEE80211_NUM_BANDS; i++) {
 		sband = wiphy->bands[i];
-
 		if (sband) {
 			for (j = 0; j < sband->n_channels; j++) {
 				ch = &sband->channels[j];
-
 				if (ch)
 					ch->flags = IEEE80211_CHAN_DISABLED;
 			}
@@ -95,14 +94,10 @@ static void _rtw_reg_apply_flags(struct wiphy *wiphy)
 						       IEEE80211_BAND_2GHZ);
 
 		ch = ieee80211_get_channel(wiphy, freq);
-		if (ch) {
-			if (channel_set[i].ScanType == SCAN_PASSIVE) {
-				ch->flags = IEEE80211_CHAN_NO_IR;
-			}
-			else {
-				ch->flags = 0;
-			}
-		}
+		if (ch && channel_set[i].ScanType == SCAN_PASSIVE)
+			ch->flags = IEEE80211_CHAN_NO_IR;
+		else
+			ch->flags = 0;
 	}
 }
 
@@ -124,7 +119,7 @@ static const struct ieee80211_regdomain *_rtw_regdomain_select(struct
 
 static void _rtw_regd_init_wiphy(struct rtw_regulatory *reg,
 				struct wiphy *wiphy,
-				void (*reg_notifier) (struct wiphy * wiphy,
+				void (*reg_notifier)(struct wiphy *wiphy,
 						     struct regulatory_request *
 						     request))
 {
@@ -144,11 +139,12 @@ static void _rtw_regd_init_wiphy(struct rtw_regulatory *reg,
 }
 
 int rtw_regd_init(struct adapter *padapter,
-		  void (*reg_notifier) (struct wiphy * wiphy,
+		  void (*reg_notifier)(struct wiphy *wiphy,
 				       struct regulatory_request *request))
 {
 	/* struct registry_priv  *registrypriv = &padapter->registrypriv; */
 	struct wiphy *wiphy = padapter->rtw_wdev->wiphy;
+
 	_rtw_regd_init_wiphy(NULL, wiphy, reg_notifier);
 
 	return 0;
